@@ -5,16 +5,16 @@
         <v-subheader>Список людей в комнате</v-subheader>
 
         <v-list-tile
-          v-for="user in users"
-          :key="user.id"
+          v-for="u in users"
+          :key="u.id"
           @click.prevent
         >
           <v-list-tile-content>
-            <v-list-tile-title v-text="user.name"></v-list-tile-title>
+            <v-list-tile-title v-text="u.name"></v-list-tile-title>
           </v-list-tile-content>
 
           <v-list-tile-icon>
-            <v-icon :color="user.id === 2 ? 'primary' : 'grey'">chat_bubble</v-icon>
+            <v-icon :color="u.id === user.id ? 'primary' : 'grey'">chat_bubble</v-icon>
           </v-list-tile-icon>
         </v-list-tile>
       </v-list>
@@ -39,19 +39,16 @@ import { mapState, mapMutations } from 'vuex';
 
 export default {
   data: () => ({
-    drawer: true,
-    users: [
-      {id: 1, name: 'user 1'},
-      {id: 2, name: 'user 2'},
-      {id: 3, name: 'user 3'}
-    ]
+    drawer: true
   }),
-  computed: mapState(['user']),
+  computed: mapState(['user', 'users']),
   methods: {
     ...mapMutations(['clearData']),
     exit() {
-      this.$router.push('/?message="leftChat');
-      this.clearData();
+      this.$socket.emit('userLeft', this.user.id, () => {
+        this.$router.push('/?message="leftChat');
+        this.clearData();
+      });
     }
   }
 };
