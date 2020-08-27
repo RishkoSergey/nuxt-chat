@@ -2,6 +2,16 @@
   <v-layout column justify-center align-center>
     <v-flex xs12 sm8>
       <v-card min-width="400">
+        <v-snackbar
+          v-model="snackbar"
+          :timeout="6000"
+          top
+        >
+          {{ message }}
+          <v-btn color="pink" flat @click="snackbar = false">
+            Закрыть
+          </v-btn>
+        </v-snackbar>
         <v-card-title>
           <h1>Войти в чат</h1>
         </v-card-title>
@@ -60,7 +70,20 @@ export default {
     roomRules: [
       v => !!v || 'Введите комнату'
     ],
+    snackbar: false,
+    message: ''
   }),
+  mounted() {
+    const { message } = this.$route.query;
+    if (message === 'noUser') {
+      this.message = 'Введите данные';
+    } else if (message === 'leftChat') {
+      this.message = 'Вы вышли из чата';
+    }
+
+    this.snackbar = Boolean(this.message);
+    console.log(this.snackbar)
+  },
   methods: {
     ...mapMutations(['setUser']),
     submit () {
